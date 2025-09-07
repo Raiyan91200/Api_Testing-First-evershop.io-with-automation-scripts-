@@ -1,0 +1,382 @@
+{
+	"info": {
+		"_postman_id": "16ef0be5-2c95-4304-ac7c-a07ead9dd9fa",
+		"name": "Project Shoe Store",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "46783094",
+		"_collection_link": "https://raiyannasim.postman.co/workspace/RaiyanNasim's-Workspace~1ae0d3ce-0d24-4a78-8c7b-e95428d6c0b3/collection/46783094-16ef0be5-2c95-4304-ac7c-a07ead9dd9fa?action=share&source=collection_link&creator=46783094"
+	},
+	"item": [
+		{
+			"name": "Search",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const search_item = [\"Nike React\", \"Nike Air\",\"Nike Court\", \"Nike zoom\"];\r",
+							"function getRndInteger(min, max) {\r",
+							"  return Math.floor(Math.random() * (max - min + 1) ) + min;\r",
+							"}\r",
+							"const Index= getRndInteger(0,3);\r",
+							"\r",
+							"pm.collectionVariables.set(\"search_item\",search_item[Index]);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var responseBody = pm.response.json();\r",
+							"const search_item = pm.collectionVariables.get(\"search_item\");\r",
+							"pm.test('Validation Of status Code 200', () => {\r",
+							"    pm.expect(200).to.eql(pm.response.code);\r",
+							"})\r",
+							"pm.test('Validate the success is true', () => {\r",
+							"    pm.expect(true).to.eql(responseBody.success);\r",
+							"})\r",
+							"//zoom =3 court=2,air=3 react=2\r",
+							"let expectedCount;\r",
+							"if (search_item == \"Nike zoom\") {\r",
+							"    expectedCount = 3\r",
+							"}\r",
+							"else if (search_item == \"Nike court\") {\r",
+							"    expectedCount = 2\r",
+							"}\r",
+							"else if (search_item == \"Nike Air\") {\r",
+							"    expectedCount = 3\r",
+							"}\r",
+							"else {\r",
+							"    expectedCount = 2\r",
+							"}\r",
+							"pm.test('Validate of the number of item is same', () => {\r",
+							"    pm.expect(expectedCount).to.eql(responseBody.eContext.graphqlResponse.e248uix4m5ibqamd.total);\r",
+							"})\r",
+							"function getRndInteger(min, max) {\r",
+							"  return Math.floor(Math.random() * (max - min + 1) ) + min;\r",
+							"}\r",
+							"const skuName=responseBody.eContext.graphqlResponse.e248uix4m5ibqamf.items[getRndInteger(0,responseBody.eContext.graphqlResponse.e248uix4m5ibqamd.total-1)].sku;\r",
+							"const skuNamef=JSON.stringify(skuName);\r",
+							"console.log(JSON.parse(skuNamef));\r",
+							"pm.collectionVariables.set(\"skuName\",JSON.parse(skuNamef));"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/search?keyword={{search_item}}&ajax=true",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"search"
+					],
+					"query": [
+						{
+							"key": "keyword",
+							"value": "{{search_item}}"
+						},
+						{
+							"key": "ajax",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Pre_cart",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var responseBody = pm.response.json();\r",
+							"let preCount = 0;\r",
+							"try {\r",
+							"    preCount = responseBody.eContext.graphqlResponse.e248uix4m5ibqb7x.totalQty;\r",
+							"}\r",
+							"catch (err) {\r",
+							"\r",
+							"    console.log(\"Empty cart\");\r",
+							"}\r",
+							"pm.collectionVariables.set(\"preCount\", preCount);\r",
+							"pm.test('Validation Of status Code 200', () => {\r",
+							"    pm.expect(200).to.eql(pm.response.code);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{baseURL}}/cart?ajax=true",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"cart"
+					],
+					"query": [
+						{
+							"key": "ajax",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cart",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"function getRndInteger(min, max) {\r",
+							"    return Math.floor(Math.random() * (max - min + 1)) + min;\r",
+							"}\r",
+							"const proqty = getRndInteger(1, 5);\r",
+							"pm.collectionVariables.set(\"productQuan\", proqty);\r",
+							"console.log(proqty);\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var responseBody = pm.response.json();\r",
+							"pm.test('Validation Of status Code 200', () => {\r",
+							"    pm.expect(200).to.eql(pm.response.code);\r",
+							"})\r",
+							"const previewCount= pm.collectionVariables.get(\"preCount\")\r",
+							"const actualquan = responseBody.data.item.qty-previewCount;\r",
+							"pm.test('Validation of actual added quantity', () => {\r",
+							"    pm.expect(actualquan).to.eql(pm.collectionVariables.get(\"productQuan\"));\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"qty\": \"{{productQuan}}\",\r\n    \"sku\": \"{{skuName}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/cart/mine/items",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"cart",
+						"mine",
+						"items"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "post_cart",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var responseBody = pm.response.json();\r",
+							"pm.test('Validation Of status Code 200', () => {\r",
+							"    pm.expect(200).to.eql(pm.response.code);\r",
+							"})\r",
+							"try{var removeApi = responseBody.eContext.graphqlResponse.e248uix4m5ibqb7y.items[0].removeApi;}\r",
+							"catch(err){console.log(\"Cart Empty\")}\r",
+							"\r",
+							"pm.collectionVariables.set(\"removeApi\", removeApi);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"qty\": \"{{productQuarntity}}\",\r\n    \"sku\": \"{{skuName}}\"\r\n}"
+				},
+				"url": {
+					"raw": "{{baseURL}}/cart?ajax=true",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"cart"
+					],
+					"query": [
+						{
+							"key": "ajax",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Remove Cart",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Validation Of status Code 200', () => {\r",
+							"    pm.expect(200).to.eql(pm.response.code);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}{{removeApi}}?ajax=true",
+					"host": [
+						"{{baseURL}}{{removeApi}}"
+					],
+					"query": [
+						{
+							"key": "ajax",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "https://demo.evershop.io"
+		},
+		{
+			"key": "search_item",
+			"value": ""
+		},
+		{
+			"key": "skuName",
+			"value": ""
+		},
+		{
+			"key": "preCount",
+			"value": ""
+		},
+		{
+			"key": "productQuan",
+			"value": ""
+		},
+		{
+			"key": "removeApi",
+			"value": ""
+		}
+	]
+}
